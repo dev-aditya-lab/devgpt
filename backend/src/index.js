@@ -205,9 +205,10 @@ app.get('/', (req, res) => {
 app.use(notFound);
 app.use(errorHandler);
 
-// Start server
-app.listen(PORT, () => {
-    console.log(`
+// Start server only when not running as serverless function
+if (process.env.VERCEL !== '1') {
+    app.listen(PORT, () => {
+        console.log(`
 ╔════════════════════════════════════════════════════════╗
 ║                                                        ║
 ║   🚀 DevGPT Backend Server                             ║
@@ -220,6 +221,9 @@ app.listen(PORT, () => {
 ║                                                        ║
 ╚════════════════════════════════════════════════════════╝
   `);
-});
+    });
+}
 
+// Export for Vercel serverless
 export default app;
+
