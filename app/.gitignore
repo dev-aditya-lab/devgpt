@@ -1,6 +1,7 @@
 # Dependencies
 node_modules/
-
+adnroid/keystore.properties
+adnroid/devgpt-release.keystore
 # Expo
 .expo/
 dist/

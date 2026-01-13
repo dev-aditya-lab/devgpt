@@ -7,7 +7,7 @@
         "icon": "./assets/icon.png",
         "scheme": "devgpt",
         "userInterfaceStyle": "dark",
-        "newArchEnabled": false,
+        "newArchEnabled": true,
         "splash": {
             "image": "./assets/splash-icon.png",
             "resizeMode": "contain",
@@ -42,7 +42,9 @@
                 "email": "devgpt@devaditya.dev",
                 "website": "https://devaditya.dev",
                 "github": "https://github.com/dev-aditya-lab"
-            }
-        }
+            },
+            "router": {}
+        },
+        "owner": "dev-aditya-lab"
     }
 }
