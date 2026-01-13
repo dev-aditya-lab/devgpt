@@ -69,12 +69,11 @@ export default function AboutScreen() {
       >
         {/* App Logo */}
         <View className="items-center mb-8">
-          <View 
-            className="w-24 h-24 rounded-3xl items-center justify-center mb-4"
-            style={{ backgroundColor: colors.primary }}
-          >
-            <Ionicons name="code-slash" size={48} color="#fff" />
-          </View>
+          <Image 
+            source={require('../../assets/icon.png')}
+            className="w-28 h-28 mb-4"
+            resizeMode="contain"
+          />
           <Text 
             className="text-2xl font-bold"
             style={{ color: colors.text }}

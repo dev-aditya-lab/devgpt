@@ -7,7 +7,7 @@
  */
 
 import React, { useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, Alert, Image } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -73,12 +73,11 @@ export default function ChatScreen() {
 
   const EmptyState = () => (
     <View className="flex-1 items-center justify-center px-8">
-      <View 
-        className="w-20 h-20 rounded-full items-center justify-center mb-6"
-        style={{ backgroundColor: colors.primary + '20' }}
-      >
-        <Ionicons name="code-slash" size={40} color={colors.primary} />
-      </View>
+      <Image 
+        source={require('../../../assets/icon.png')}
+        className="w-24 h-24 mb-6"
+        resizeMode="contain"
+      />
       <Text 
         className="text-2xl font-bold text-center mb-2"
         style={{ color: colors.text }}
@@ -147,12 +146,11 @@ export default function ChatScreen() {
         }}
       >
         <View className="flex-row items-center">
-          <View 
-            className="w-10 h-10 rounded-full items-center justify-center mr-3"
-            style={{ backgroundColor: colors.primary }}
-          >
-            <Ionicons name="code-slash" size={20} color="#fff" />
-          </View>
+          <Image 
+            source={require('../../../assets/icon.png')}
+            className="w-10 h-10 rounded-lg mr-3"
+            resizeMode="contain"
+          />
           <View>
             <Text 
               className="text-lg font-bold"

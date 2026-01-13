@@ -7,7 +7,7 @@
         "icon": "./assets/icon.png",
         "scheme": "devgpt",
         "userInterfaceStyle": "dark",
-        "newArchEnabled": true,
+        "newArchEnabled": false,
         "splash": {
             "image": "./assets/splash-icon.png",
             "resizeMode": "contain",
@@ -39,7 +39,7 @@
         "extra": {
             "author": {
                 "name": "Aditya Kumar Gupta",
-                "email": "hello@devaditya.dev",
+                "email": "devgpt@devaditya.dev",
                 "website": "https://devaditya.dev",
                 "github": "https://github.com/dev-aditya-lab"
             }

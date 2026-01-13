@@ -14,6 +14,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -91,12 +92,11 @@ export default function LoginScreen() {
 
           {/* Logo */}
           <View className="items-center mb-8">
-            <View 
-              className="w-20 h-20 rounded-2xl items-center justify-center mb-4"
-              style={{ backgroundColor: colors.primary }}
-            >
-              <Ionicons name="code-slash" size={40} color="#fff" />
-            </View>
+            <Image 
+              source={require('../../../assets/icon.png')}
+              className="w-24 h-24 mb-4"
+              resizeMode="contain"
+            />
             <Text 
               className="text-3xl font-bold"
               style={{ color: colors.text }}

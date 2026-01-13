@@ -147,9 +147,13 @@ export async function sendMessageStream(
   onError: (error: Error) => void
 ): Promise<void> {
   const token = await getToken();
+  console.log('[API] sendMessageStream called for chatId:', chatId);
 
   try {
-    const response = await fetch(`${API_BASE_URL}/chat/${chatId}/message`, {
+    const url = `${API_BASE_URL}/chat/${chatId}/message`;
+    console.log('[API] Fetching:', url);
+    
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -158,53 +162,48 @@ export async function sendMessageStream(
       body: JSON.stringify({ content, model }),
     });
 
+    console.log('[API] Response status:', response.status);
+    
     if (!response.ok) {
       const error = await response.json();
+      console.error('[API] Error response:', error);
       throw new Error(error.message || 'Failed to send message');
     }
 
-    const reader = response.body?.getReader();
-    const decoder = new TextDecoder();
-
-    if (!reader) {
-      throw new Error('No response body');
-    }
-
-    while (true) {
-      const { done, value } = await reader.read();
-      
-      if (done) break;
-
-      const text = decoder.decode(value, { stream: true });
-      const lines = text.split('\n');
-
-      for (const line of lines) {
-        if (line.startsWith('data: ')) {
-          try {
-            const data = JSON.parse(line.slice(6));
-            
-            if (data.error) {
-              onError(new Error(data.error));
-              return;
-            }
-            
-            if (data.done) {
-              onDone();
-              return;
-            }
-            
-            if (data.content) {
-              onChunk(data.content);
-            }
-          } catch (e) {
-            // Ignore parse errors for incomplete chunks
+    // React Native doesn't support response.body streaming
+    // Read the entire response as text and parse SSE events
+    const text = await response.text();
+    console.log('[API] Got response text, length:', text.length);
+    
+    const lines = text.split('\n');
+    
+    for (const line of lines) {
+      if (line.startsWith('data: ')) {
+        try {
+          const data = JSON.parse(line.slice(6));
+          
+          if (data.error) {
+            onError(new Error(data.error));
+            return;
           }
+          
+          if (data.done) {
+            onDone();
+            return;
+          }
+          
+          if (data.content) {
+            onChunk(data.content);
+          }
+        } catch (e) {
+          // Ignore parse errors for incomplete chunks
         }
       }
     }
 
     onDone();
   } catch (error) {
+    console.error('[API] sendMessageStream error:', error);
     onError(error instanceof Error ? error : new Error('Unknown error'));
   }
 }

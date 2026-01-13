@@ -66,7 +66,12 @@ const chatStoreCreator: StateCreator<ChatStore> = (set, get) => ({
       const response = await chatApi.createChat(selectedModel);
       
       if (response.success && response.data) {
-        const newChat = response.data;
+        const chatData = response.data as Chat & { _id?: string };
+        // Normalize: MongoDB returns _id, we need id
+        const newChat: Chat = {
+          ...chatData,
+          id: chatData.id || chatData._id || '',
+        };
         set((state: ChatStore) => ({ 
           chats: [newChat, ...state.chats],
           currentChat: newChat,
@@ -78,6 +83,7 @@ const chatStoreCreator: StateCreator<ChatStore> = (set, get) => ({
       return null;
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to create chat';
+      console.error('Create chat error:', message);
       set({ error: message, isLoading: false });
       return null;
     }
@@ -118,14 +124,28 @@ const chatStoreCreator: StateCreator<ChatStore> = (set, get) => ({
   sendMessage: async (content: string) => {
     const { currentChat, selectedModel, messages } = get();
     
+    console.log('[sendMessage] Starting, currentChat:', currentChat?.id);
+    
     if (!currentChat) {
       // Create a new chat first
+      console.log('[sendMessage] No current chat, creating new one...');
       const newChat = await get().createChat();
-      if (!newChat) return;
+      if (!newChat) {
+        console.error('[sendMessage] Failed to create chat');
+        set({ error: 'Failed to create chat', isSending: false });
+        return;
+      }
+      console.log('[sendMessage] Created chat:', newChat.id);
     }
     
     const chatId = get().currentChat?.id;
-    if (!chatId) return;
+    console.log('[sendMessage] Using chatId:', chatId);
+    
+    if (!chatId) {
+      console.error('[sendMessage] No chatId available');
+      set({ error: 'No chat ID available', isSending: false });
+      return;
+    }
 
     // Add user message immediately
     const userMessage: Message = {
@@ -155,6 +175,7 @@ const chatStoreCreator: StateCreator<ChatStore> = (set, get) => ({
     });
 
     try {
+      console.log('[sendMessage] Calling sendMessageStream for chatId:', chatId);
       await sendMessageStream(
         chatId,
         content,
@@ -172,6 +193,7 @@ const chatStoreCreator: StateCreator<ChatStore> = (set, get) => ({
         },
         // On done
         () => {
+          console.log('[sendMessage] Stream completed successfully');
           set((state: ChatStore) => ({
             isSending: false,
             messages: state.messages.map((msg: Message) =>
@@ -187,6 +209,7 @@ const chatStoreCreator: StateCreator<ChatStore> = (set, get) => ({
         },
         // On error
         (error: Error) => {
+          console.error('[sendMessage] Stream error:', error.message);
           set((state: ChatStore) => ({
             isSending: false,
             error: error.message,
@@ -196,6 +219,7 @@ const chatStoreCreator: StateCreator<ChatStore> = (set, get) => ({
       );
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to send message';
+      console.error('[sendMessage] Catch block error:', message);
       set({ error: message, isSending: false });
     }
   },
