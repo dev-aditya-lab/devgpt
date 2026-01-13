@@ -1,0 +1,48 @@
+{
+    "expo": {
+        "name": "DevGPT",
+        "slug": "devgpt",
+        "version": "1.0.0",
+        "orientation": "portrait",
+        "icon": "./assets/icon.png",
+        "scheme": "devgpt",
+        "userInterfaceStyle": "dark",
+        "newArchEnabled": true,
+        "splash": {
+            "image": "./assets/splash-icon.png",
+            "resizeMode": "contain",
+            "backgroundColor": "#0D1117"
+        },
+        "ios": {
+            "supportsTablet": true,
+            "bundleIdentifier": "dev.devaditya.devgpt"
+        },
+        "android": {
+            "adaptiveIcon": {
+                "foregroundImage": "./assets/adaptive-icon.png",
+                "backgroundColor": "#0D1117"
+            },
+            "package": "dev.devaditya.devgpt"
+        },
+        "web": {
+            "bundler": "metro",
+            "output": "static",
+            "favicon": "./assets/favicon.png"
+        },
+        "plugins": [
+            "expo-router",
+            "expo-font"
+        ],
+        "experiments": {
+            "typedRoutes": true
+        },
+        "extra": {
+            "author": {
+                "name": "Aditya Kumar Gupta",
+                "email": "hello@devaditya.dev",
+                "website": "https://devaditya.dev",
+                "github": "https://github.com/dev-aditya-lab"
+            }
+        }
+    }
+}
