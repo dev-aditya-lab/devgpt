@@ -19,7 +19,7 @@ import type { Message } from '../../src/types';
 
 export default function ChatScreen() {
   const router = useRouter();
-  const listRef = useRef<FlashList<Message>>(null);
+  const listRef = useRef<any>(null);
   
   const { isAuthenticated } = useAuth();
   const { 
@@ -74,7 +74,7 @@ export default function ChatScreen() {
   const EmptyState = () => (
     <View className="flex-1 items-center justify-center px-8">
       <Image 
-        source={require('../../../assets/icon.png')}
+        source={require('../../assets/icon.png')}
         className="w-24 h-24 mb-6"
         resizeMode="contain"
       />
@@ -147,7 +147,7 @@ export default function ChatScreen() {
       >
         <View className="flex-row items-center">
           <Image 
-            source={require('../../../assets/icon.png')}
+            source={require('../../assets/icon.png')}
             className="w-10 h-10 rounded-lg mr-3"
             resizeMode="contain"
           />
@@ -190,7 +190,6 @@ export default function ChatScreen() {
         <FlashList
           ref={listRef}
           data={messages}
-          estimatedItemSize={150}
           renderItem={({ item }: { item: Message }) => <ChatMessage message={item} />}
           keyExtractor={(item: Message) => item.id}
           contentContainerStyle={{ paddingVertical: 16 }}

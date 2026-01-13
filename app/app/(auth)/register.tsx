@@ -109,7 +109,7 @@ export default function RegisterScreen() {
           {/* Logo */}
           <View className="items-center mb-8">
             <Image 
-              source={require('../../../assets/icon.png')}
+              source={require('../../assets/icon.png')}
               className="w-24 h-24 mb-4"
               resizeMode="contain"
             />

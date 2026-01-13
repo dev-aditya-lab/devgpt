@@ -70,7 +70,7 @@ export default function AboutScreen() {
         {/* App Logo */}
         <View className="items-center mb-8">
           <Image 
-            source={require('../../assets/icon.png')}
+            source={require('../assets/icon.png')}
             className="w-28 h-28 mb-4"
             resizeMode="contain"
           />
