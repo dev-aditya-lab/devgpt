@@ -1,7 +1,7 @@
 import express from 'express';
 import chatService from '../services/chat.service.js';
 import { streamCompletion } from '../services/ai.service.js';
-import { protect } from '../middleware/index.js';
+import { protect, optionalAuth } from '../middleware/index.js';
 import { ApiError } from '../middleware/errorHandler.js';
 
 /**
@@ -41,13 +41,14 @@ router.get('/', protect, async (req, res, next) => {
 /**
  * @route   POST /api/chat
  * @desc    Create a new chat
- * @access  Private
+ * @access  Public (Optional Auth)
  */
-router.post('/', protect, async (req, res, next) => {
+router.post('/', optionalAuth, async (req, res, next) => {
     try {
         const { model } = req.body;
+        const userId = req.user ? req.user._id : null;
 
-        const chat = await chatService.createChat(req.user._id, model);
+        const chat = await chatService.createChat(userId, model);
 
         res.status(201).json({
             success: true,
@@ -61,11 +62,12 @@ router.post('/', protect, async (req, res, next) => {
 /**
  * @route   GET /api/chat/:id
  * @desc    Get a single chat with messages
- * @access  Private
+ * @access  Public (Optional Auth)
  */
-router.get('/:id', protect, async (req, res, next) => {
+router.get('/:id', optionalAuth, async (req, res, next) => {
     try {
-        const chat = await chatService.getChatById(req.params.id, req.user._id);
+        const userId = req.user ? req.user._id : null;
+        const chat = await chatService.getChatById(req.params.id, userId);
 
         if (!chat) {
             throw new ApiError('Chat not found', 404);
@@ -88,19 +90,20 @@ router.get('/:id', protect, async (req, res, next) => {
 /**
  * @route   POST /api/chat/:id/message
  * @desc    Send a message and get AI response (streaming)
- * @access  Private
+ * @access  Public (Optional Auth)
  */
-router.post('/:id/message', protect, async (req, res, next) => {
+router.post('/:id/message', optionalAuth, async (req, res, next) => {
     try {
         const { content, model } = req.body;
         const chatId = req.params.id;
+        const userId = req.user ? req.user._id : null;
 
         if (!content) {
             throw new ApiError('Message content is required', 400);
         }
 
-        // Verify chat belongs to user
-        const chat = await chatService.getChatById(chatId, req.user._id);
+        // Verify chat belongs to user or is guest chat
+        const chat = await chatService.getChatById(chatId, userId);
         if (!chat) {
             throw new ApiError('Chat not found', 404);
         }

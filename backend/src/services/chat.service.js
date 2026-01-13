@@ -10,13 +10,13 @@ import { generateChatTitle } from './ai.service.js';
 
 /**
  * Create a new chat for a user
- * @param {string} userId - User ID
+ * @param {string|null} userId - User ID (optional)
  * @param {string} modelId - Initial model ID
  * @returns {Promise<Chat>} - Created chat
  */
 export const createChat = async (userId, modelId = 'llama-3.3-70b-versatile') => {
     const chat = new Chat({
-        user: userId,
+        user: userId, // Can be null
         title: 'New Chat',
         model: modelId
     });
@@ -33,6 +33,8 @@ export const createChat = async (userId, modelId = 'llama-3.3-70b-versatile') =>
  * @returns {Promise<Array>} - Array of chats
  */
 export const getUserChats = async (userId, limit = 50, skip = 0) => {
+    if (!userId) return []; // Guests don't have saved chats list
+
     return await Chat.find({ user: userId })
         .sort({ updatedAt: -1 })
         .limit(limit)
@@ -43,11 +45,24 @@ export const getUserChats = async (userId, limit = 50, skip = 0) => {
 /**
  * Get a single chat by ID
  * @param {string} chatId - Chat ID
- * @param {string} userId - User ID (for authorization)
+ * @param {string|null} userId - User ID (for authorization)
  * @returns {Promise<Chat|null>} - Chat or null
  */
 export const getChatById = async (chatId, userId) => {
-    return await Chat.findOne({ _id: chatId, user: userId }).lean();
+    // If userId provided, check ownership. If not, check if chat has no user (guest chat)
+    const query = { _id: chatId };
+    if (userId) {
+        query.user = userId;
+    } else {
+        query.user = null;
+    }
+
+    // Allow accessing guest chats even if logged in? 
+    // Usually logged in users should only see their own.
+    // But if a user created a chat while logged out, they might want to see it?
+    // For now, strict: Logged in -> Own chats. Guest -> Guest chats.
+
+    return await Chat.findOne(query).lean();
 };
 
 /**
