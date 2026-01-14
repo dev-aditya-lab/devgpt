@@ -41,6 +41,14 @@ export const protect = async (req, res, next) => {
             });
         }
 
+        // Check if user is banned
+        if (user.isBanned) {
+            return res.status(403).json({
+                success: false,
+                message: 'Your account has been banned. Please contact support.'
+            });
+        }
+
         req.user = user;
         next();
     } catch (error) {
@@ -55,6 +63,7 @@ export const protect = async (req, res, next) => {
 /**
  * Optional authentication - attach user if token present
  * Allows both authenticated and unauthenticated access
+ * BUT blocks banned users
  */
 export const optionalAuth = async (req, res, next) => {
     try {
@@ -67,6 +76,15 @@ export const optionalAuth = async (req, res, next) => {
         if (token) {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
             const user = await User.findById(decoded.id);
+
+            // Block banned users
+            if (user && user.isBanned) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Your account has been banned. Please contact support.'
+                });
+            }
+
             req.user = user;
         }
 

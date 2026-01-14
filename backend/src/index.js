@@ -8,7 +8,9 @@ import {
     userRoutes,
     chatRoutes,
     modelsRoutes,
-    healthRoutes
+    healthRoutes,
+    adminRoutes,
+    contactRoutes
 } from './routes/index.js';
 
 /**
@@ -53,6 +55,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/models', modelsRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/contact', contactRoutes);
 
 // Helper to format uptime
 const formatUptime = (seconds) => {
